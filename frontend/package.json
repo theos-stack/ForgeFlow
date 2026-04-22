@@ -1,0 +1,22 @@
+{
+  "name": "forgeflow-ai-frontend",
+  "version": "1.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "node --no-experimental-webstorage ./node_modules/next/dist/bin/next dev",
+    "build": "node --no-experimental-webstorage ./node_modules/next/dist/bin/next build",
+    "start": "node --no-experimental-webstorage ./node_modules/next/dist/bin/next start",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "15.3.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "typescript": "^5.8.3"
+  }
+}
