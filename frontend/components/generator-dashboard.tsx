@@ -151,7 +151,7 @@ export default function GeneratorDashboard() {
       <div className="motion-beam beam-two" />
 
       <section className="app-header">
-        <div>
+        <div className="header-main">
           <span className={`health-pill ${healthOk ? "ok" : "warn"}`}>{healthLabel}</span>
           <h1>{APP_NAME}</h1>
           <p className="header-copy">AI strategy, platform planning, and polished Excel delivery in one focused workspace.</p>
@@ -348,7 +348,7 @@ export default function GeneratorDashboard() {
             <div className="panel-header compact">
               <h2>Generated calendar</h2>
             </div>
-            <div className="table-wrap">
+            <div className="table-wrap desktop-table">
               <table>
                 <thead>
                   <tr>
@@ -379,6 +379,35 @@ export default function GeneratorDashboard() {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            <div className="mobile-records">
+              {records.length > 0 ? (
+                records.map((record, index) => (
+                  <article key={`${record.Day}-${record.Platform}-mobile-${index}`} className="mobile-record-card">
+                    <div className="mobile-record-top">
+                      <span className="mobile-record-day">{record.Day}</span>
+                      <span className="mobile-record-platform">{record.Platform}</span>
+                    </div>
+                    <div className="mobile-record-body">
+                      <div>
+                        <span className="mobile-record-label">Topic</span>
+                        <strong>{record.Topic}</strong>
+                      </div>
+                      <div>
+                        <span className="mobile-record-label">Format</span>
+                        <p>{record.Format}</p>
+                      </div>
+                      <div>
+                        <span className="mobile-record-label">Hook</span>
+                        <p>{record.Hook}</p>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <div className="empty-cell mobile-empty">No results yet. Generate a calendar to see rows here.</div>
+              )}
             </div>
           </section>
         </div>

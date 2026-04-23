@@ -57,7 +57,7 @@ button {
   --ring: rgba(37, 99, 235, 0.16);
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: clip;
   padding: 32px 24px 56px;
   color: var(--text);
   background:
@@ -167,10 +167,22 @@ button {
   animation: riseIn 0.7s ease both;
 }
 
+.header-main,
+.intro-copy,
+.flow-steps,
+.dashboard-grid > *,
+.side-stack,
+.table-panel,
+.panel,
+.intro-section > * {
+  min-width: 0;
+}
+
 .app-header h1 {
   margin: 12px 0 0;
   font-size: clamp(2rem, 4vw, 3.6rem);
   line-height: 0.96;
+  overflow-wrap: anywhere;
 }
 
 .header-copy {
@@ -186,6 +198,7 @@ button {
   justify-content: flex-end;
   gap: 12px;
   flex-wrap: wrap;
+  min-width: min(100%, 440px);
 }
 
 .health-pill {
@@ -222,6 +235,7 @@ button {
 .theme-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   min-height: 58px;
   padding: 10px 13px;
@@ -451,6 +465,9 @@ textarea {
 }
 
 .chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--panel-border);
   background: var(--panel-solid);
   color: var(--text);
@@ -458,6 +475,8 @@ textarea {
   padding: 11px 16px;
   cursor: pointer;
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .chip.active {
@@ -506,6 +525,7 @@ textarea {
   min-height: 52px;
   padding: 0 20px;
   transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+  text-align: center;
 }
 
 .primary-btn {
@@ -572,6 +592,7 @@ td {
   text-align: left;
   padding: 14px 16px;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
 th {
@@ -600,6 +621,71 @@ tbody tr:hover {
   color: var(--muted);
   text-align: center;
   padding: 34px 16px;
+}
+
+.mobile-records {
+  display: none;
+}
+
+.mobile-record-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-solid);
+  padding: 16px;
+}
+
+.mobile-record-card + .mobile-record-card {
+  margin-top: 12px;
+}
+
+.mobile-record-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mobile-record-day,
+.mobile-record-platform {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-soft);
+  font-size: 0.85rem;
+}
+
+.mobile-record-platform {
+  color: var(--accent-strong);
+}
+
+.mobile-record-body {
+  display: grid;
+  gap: 14px;
+}
+
+.mobile-record-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mobile-record-body strong,
+.mobile-record-body p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.mobile-empty {
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--panel-solid);
 }
 
 .app-footer {
@@ -696,41 +782,147 @@ tbody tr:hover {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+
+  .header-side {
+    min-width: 0;
+  }
 }
 
 @media (max-width: 760px) {
   .page-shell {
-    padding: 20px 14px 40px;
+    padding: 16px 12px 32px;
   }
 
   .app-header,
   .intro-section,
   .panel {
-    padding: 18px;
+    padding: 16px;
   }
 
   .app-header {
     align-items: flex-start;
     flex-direction: column;
+    gap: 16px;
   }
 
   .header-side {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: flex-start;
+    width: 100%;
+  }
+
+  .header-main {
     width: 100%;
   }
 
   .theme-toggle,
   .metric-card {
-    flex: 1 1 150px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .theme-toggle {
+    grid-column: 1 / -1;
+  }
+
+  .header-copy {
+    font-size: 0.96rem;
+  }
+
+  .intro-copy h2 {
+    font-size: 1.55rem;
+    line-height: 1.12;
   }
 
   .flow-steps,
-  .two-col,
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flow-step {
+    min-height: auto;
+  }
+
+  .chip-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chip {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 14px;
+  }
+
+  .action-row {
+    flex-direction: column;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+  }
+
+  .desktop-table {
+    display: none;
+  }
+
+  .mobile-records {
+    display: block;
+  }
+
+  .app-footer {
+    padding: 0 8px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 12px 10px 24px;
+  }
+
+  .app-header,
+  .intro-section,
+  .panel {
+    padding: 14px;
+  }
+
+  .app-header h1 {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .header-side,
   .summary-grid {
     grid-template-columns: 1fr;
   }
 
-  .action-row {
+  .summary-card {
+    padding: 14px;
+  }
+
+  .summary-card strong,
+  .metric-card strong {
+    font-size: 1.35rem;
+  }
+
+  input,
+  textarea {
+    padding: 12px 14px;
+  }
+
+  .chip-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-record-top {
+    align-items: flex-start;
     flex-direction: column;
   }
 }
