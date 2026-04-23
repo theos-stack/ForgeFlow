@@ -4,7 +4,6 @@ import os
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from openpyxl import Workbook
@@ -13,7 +12,6 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from app.config import OPENAI_MODEL, OUTPUT_DIR
 
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 REQUIRED_KEYS = [

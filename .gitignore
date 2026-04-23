@@ -1,6 +1,8 @@
 # Environment files
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
 !**/.env.example
 
@@ -13,6 +15,7 @@ env/
 
 # Backend generated files
 backend/outputs/
+backend/outputs/**
 *.xlsx
 
 # Node / Next.js

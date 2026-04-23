@@ -15,6 +15,9 @@ The app is built for content strategists, founders, marketers, agencies, and ope
 - Downloads a styled Excel workbook with bold headers, borders, wrapped text, frozen header row, widened columns, and table formatting.
 - Uses OpenAI for generation, with a structured fallback engine if AI generation is unavailable.
 - Includes a refined animated frontend with light/dark theme support.
+- Supports account-based generation history with Clerk authentication.
+- Saves generation history per account, so users only see calendars they generated.
+- Supports MongoDB Atlas for persistent history storage, with local JSON fallback for development.
 
 ## Tech Stack
 
@@ -25,6 +28,7 @@ Frontend:
 - TypeScript
 - CSS animations and theme variables
 - Next.js API routes as a proxy layer to the backend
+- Clerk authentication
 
 Backend:
 
@@ -34,6 +38,7 @@ Backend:
 - OpenAI chat model
 - Pydantic
 - OpenPyXL
+- MongoDB Atlas / PyMongo
 
 ## Project Structure
 
@@ -80,6 +85,8 @@ OPENAI_MODEL=gpt-4o-mini
 APP_NAME=ForgeFlow AI
 FRONTEND_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:3010,http://127.0.0.1:3010
 OUTPUT_DIR=outputs
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGODB_DB_NAME=forgeflow_ai
 ```
 
 ### Frontend
@@ -88,12 +95,16 @@ Create `frontend/.env.local`:
 
 ```env
 NEXT_PUBLIC_APP_NAME=ForgeFlow AI
-NEXT_PUBLIC_PORTFOLIO_URL=https://sam-ojo.com
 NEXT_PUBLIC_CREATOR_NAME=Samuel Ojo
 BACKEND_API_BASE_URL=http://127.0.0.1:8010
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
+CLERK_SECRET_KEY=sk_test_your_clerk_secret_key
+DEMO_USER_ID=local-demo-user
 ```
 
 `BACKEND_API_BASE_URL` is used by the frontend API proxy routes. In production, set it to your deployed backend URL.
+
+If Clerk keys are not provided locally, the app runs in demo history mode using `DEMO_USER_ID`. For real accounts, add Clerk keys so each signed-in user gets a private dashboard history.
 
 ## Local Development
 
@@ -152,9 +163,10 @@ Add these environment variables in Vercel:
 
 ```env
 NEXT_PUBLIC_APP_NAME=ForgeFlow AI
-NEXT_PUBLIC_PORTFOLIO_URL=https://sam-ojo.com
 NEXT_PUBLIC_CREATOR_NAME=Samuel Ojo
 BACKEND_API_BASE_URL=https://your-deployed-backend-url.com
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_your_clerk_publishable_key
+CLERK_SECRET_KEY=sk_live_your_clerk_secret_key
 ```
 
 ### Deploy The Backend
@@ -169,6 +181,8 @@ OPENAI_MODEL=gpt-4o-mini
 APP_NAME=ForgeFlow AI
 FRONTEND_ORIGINS=https://your-vercel-domain.vercel.app
 OUTPUT_DIR=outputs
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGODB_DB_NAME=forgeflow_ai
 ```
 
 Typical production start command:
@@ -178,6 +192,28 @@ uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
 After deploying the backend, copy the public backend URL into Vercel as `BACKEND_API_BASE_URL`.
+
+The clickable footer credit is wired directly to Samuel Ojo's portfolio website: `https://samuel-ojo.vercel.app`.
+
+## Account Dashboard
+
+ForgeFlow AI includes a dashboard view for saved generation history. After a user generates a content calendar, the backend stores:
+
+- authenticated user ID
+- company summary
+- weekly focus
+- selected platforms
+- posts per day
+- number of days
+- total generated rows
+- generated Excel file name
+- download URL
+- generation mode
+- timestamp
+
+The history endpoint is scoped by user ID. One account cannot fetch another account's generation history.
+
+In development, if MongoDB is not configured, history is saved to `backend/outputs/generation_history.json`. In production, configure `MONGODB_URI` so history persists in MongoDB Atlas.
 
 ## GitHub Preparation
 

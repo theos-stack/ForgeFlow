@@ -1,4 +1,4 @@
-import { GenerateRequest, GenerateResponse } from "@/lib/types";
+import { GenerateRequest, GenerateResponse, GenerationHistoryResponse } from "@/lib/types";
 
 const API_BASE_URL = "/api";
 
@@ -54,6 +54,18 @@ export async function generateCalendar(payload: GenerateRequest): Promise<Genera
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+}
+
+export async function getGenerationHistory(): Promise<GenerationHistoryResponse> {
+  const response = await fetch(`${API_BASE_URL}/history`, {
+    cache: "no-store",
   });
 
   if (!response.ok) {

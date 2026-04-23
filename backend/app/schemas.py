@@ -22,3 +22,18 @@ class GenerateCalendarResponse(BaseModel):
     total_rows: int
     generation_mode: Optional[str] = None
     warning: Optional[str] = None
+
+
+class GenerationHistoryEvent(BaseModel):
+    id: str
+    user_id: str
+    company_summary: str
+    weekly_focus: str
+    platforms: List[str]
+    posts_per_day: int
+    number_of_days: int
+    total_rows: int
+    file_name: str
+    download_url: str
+    generation_mode: Optional[str] = None
+    created_at: str

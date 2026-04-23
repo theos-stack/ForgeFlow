@@ -9,9 +9,10 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.2.5",
     "next": "15.3.8",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",

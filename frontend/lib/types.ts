@@ -32,3 +32,22 @@ export interface GenerateResponse {
   generation_mode?: "ai" | "hybrid" | "fallback";
   warning?: string | null;
 }
+
+export interface GenerationHistoryEvent {
+  id: string;
+  user_id: string;
+  company_summary: string;
+  weekly_focus: string;
+  platforms: Platform[];
+  posts_per_day: number;
+  number_of_days: number;
+  total_rows: number;
+  file_name: string;
+  download_url: string;
+  generation_mode?: "ai" | "hybrid" | "fallback";
+  created_at: string;
+}
+
+export interface GenerationHistoryResponse {
+  events: GenerationHistoryEvent[];
+}

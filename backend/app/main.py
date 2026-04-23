@@ -1,10 +1,18 @@
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from app.config import APP_NAME, FRONTEND_ORIGINS, OUTPUT_DIR
+from app.config import (
+    APP_NAME,
+    FRONTEND_ORIGINS,
+    MONGODB_URI_CONFIGURED,
+    OPENAI_API_KEY_CONFIGURED,
+    OPENAI_MODEL,
+    OUTPUT_DIR,
+)
+from app.database import get_history_store
 from app.generator import generate_content_calendar
 from app.schemas import GenerateCalendarRequest
 from app.utils import build_platform_summary
@@ -22,11 +30,33 @@ app.add_middleware(
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "app_name": APP_NAME}
+    history_store = get_history_store()
+    return {
+        "status": "ok",
+        "app_name": APP_NAME,
+        "ai_configured": OPENAI_API_KEY_CONFIGURED,
+        "openai_model": OPENAI_MODEL,
+        "mongo_configured": MONGODB_URI_CONFIGURED,
+        "storage_backend": history_store.storage_backend,
+        "storage_warning": history_store.storage_warning,
+    }
+
+
+def get_required_user_id(user_id: str | None) -> str:
+    clean_user_id = (user_id or "").strip()
+    if not clean_user_id:
+        raise HTTPException(status_code=401, detail="Sign in is required.")
+    return clean_user_id
+
+
+def summarize_company_details(company_details: str) -> str:
+    summary = " ".join(company_details.split())
+    return summary[:120] + ("..." if len(summary) > 120 else "")
 
 
 @app.post("/generate")
-def generate(request: GenerateCalendarRequest):
+def generate(request: GenerateCalendarRequest, x_forgeflow_user_id: str | None = Header(default=None)):
+    user_id = get_required_user_id(x_forgeflow_user_id)
     result = generate_content_calendar(
         company_details=request.company_details,
         weekly_focus=request.weekly_focus,
@@ -41,8 +71,7 @@ def generate(request: GenerateCalendarRequest):
 
     records = result["records"]
     platform_summary = build_platform_summary(records, request.platforms)
-
-    return {
+    response_payload = {
         "records": records,
         "file_name": result["file_name"],
         "download_url": f"/download/{result['file_name']}",
@@ -51,6 +80,32 @@ def generate(request: GenerateCalendarRequest):
         "generation_mode": result.get("generation_mode"),
         "warning": result.get("warning"),
     }
+
+    get_history_store().save_generation(
+        {
+            "user_id": user_id,
+            "company_summary": summarize_company_details(request.company_details),
+            "weekly_focus": request.weekly_focus,
+            "platforms": request.platforms,
+            "posts_per_day": request.posts_per_day,
+            "number_of_days": request.number_of_days,
+            "total_rows": len(records),
+            "file_name": result["file_name"],
+            "download_url": response_payload["download_url"],
+            "generation_mode": result.get("generation_mode"),
+        }
+    )
+
+    return response_payload
+
+
+@app.get("/history")
+def list_history(
+    x_forgeflow_user_id: str | None = Header(default=None),
+    limit: int = Query(default=50, ge=1, le=100),
+):
+    user_id = get_required_user_id(x_forgeflow_user_id)
+    return {"events": get_history_store().list_generations(user_id=user_id, limit=limit)}
 
 
 @app.get("/download/{file_name}")
