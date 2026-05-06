@@ -1,5 +1,5 @@
-import GeneratorDashboard from "@/components/generator-dashboard";
+﻿import OverviewPage from "@/components/overview-page";
 
 export default function HomePage() {
-  return <GeneratorDashboard />;
+  return <OverviewPage />;
 }
