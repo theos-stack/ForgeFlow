@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,7 +8,7 @@ import AuthControls from "@/components/auth-controls";
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "ForgeFlow AI";
 const PORTFOLIO_URL = "https://samuel-ojo.vercel.app";
 const NAV_ITEMS = [
-  { href: "/", label: "Overview", kicker: "Welcome", icon: "OV", tourId: "overview" },
+  { href: "/", label: "Overview", kicker: "Home", icon: "OV", tourId: "overview" },
   { href: "/generate", label: "Generate", kicker: "Studio", icon: "GN", tourId: "generate" },
   { href: "/dashboard", label: "Dashboard", kicker: "Archive", icon: "DB", tourId: "dashboard" },
 ] as const;
@@ -98,7 +98,7 @@ export default function AppShell({ children }: PropsWithChildren) {
   }, [pathname]);
 
   return (
-    <div className="app-shell">
+    <div className="app-shell compact-app-shell">
       <button
         type="button"
         className={`app-sidebar-backdrop ${mobileOpen ? "is-visible" : ""}`}
@@ -106,17 +106,17 @@ export default function AppShell({ children }: PropsWithChildren) {
         onClick={() => setMobileOpen(false)}
       />
 
-      <aside className={`app-sidebar ${mobileOpen ? "is-open" : ""} ${tourActive ? "tour-elevated" : ""}`}>
-        <div className="brand-card">
+      <aside className={`app-sidebar compact-sidebar ${mobileOpen ? "is-open" : ""} ${tourActive ? "tour-elevated" : ""}`}>
+        <div className="brand-card compact-brand-card">
           <div className="brand-mark">FF</div>
-          <div className="brand-copy">
-            <span className="eyebrow-text">Welcome to ForgeFlow</span>
+          <div className="brand-copy compact-brand-copy">
+            <span className="eyebrow-text">ForgeFlow</span>
             <h1>{APP_NAME}</h1>
-            <p>We built this space to help you plan faster, think clearly, and move from idea to export without losing the thread.</p>
+            <p>Plan. Generate. Export.</p>
           </div>
         </div>
 
-        <nav className="sidebar-nav" aria-label="Primary">
+        <nav className="sidebar-nav compact-sidebar-nav" aria-label="Primary">
           {NAV_ITEMS.map((item) => {
             const isActive = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
@@ -131,29 +131,18 @@ export default function AppShell({ children }: PropsWithChildren) {
             );
           })}
         </nav>
-
-        <div className="sidebar-footer">
-          <div className="workspace-note">
-            <span className="eyebrow-text">How we flow</span>
-            <strong>See it. Shape it. Ship it.</strong>
-            <p>We keep the path simple: start with the big picture, build the brief, then come back to your archive whenever you need it.</p>
-          </div>
-        </div>
       </aside>
 
-      <div className="shell-main-column">
-        <header className="topbar">
+      <div className="shell-main-column compact-main-column">
+        <header className="topbar compact-topbar desktop-topbar">
           <div className="topbar-main">
-            <button type="button" className="topbar-menu mobile-only" onClick={() => setMobileOpen((current) => !current)}>
-              {mobileOpen ? "Close" : "Menu"}
-            </button>
             <div>
               <span className="eyebrow-text">{pageMeta.kicker}</span>
               <h2>{pageMeta.label}</h2>
             </div>
           </div>
 
-          <div className="topbar-actions">
+          <div className="topbar-actions compact-topbar-actions">
             <button
               className="theme-toggle"
               type="button"
@@ -172,9 +161,35 @@ export default function AppShell({ children }: PropsWithChildren) {
           </div>
         </header>
 
-        <main className="page-content">{children}</main>
+        <header className="mobile-topbar">
+          <div className="mobile-topbar-left" data-tour="account">
+            <AuthControls compact />
+          </div>
+          <div className="mobile-topbar-center">
+            <span className="mobile-topbar-title">{pageMeta.label}</span>
+            <button
+              className="theme-toggle compact-theme-toggle"
+              type="button"
+              data-tour="theme"
+              onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            >
+              <span className="toggle-track">
+                <span className="toggle-thumb" />
+              </span>
+              <span className="compact-theme-label">{theme === "dark" ? "Light" : "Dark"}</span>
+            </button>
+          </div>
+          <button type="button" className="hamburger-btn" onClick={() => setMobileOpen((current) => !current)} aria-label={mobileOpen ? "Close menu" : "Open menu"}>
+            <span />
+            <span />
+            <span />
+          </button>
+        </header>
 
-        <footer className="app-footer">
+        <main className="page-content compact-page-content">{children}</main>
+
+        <footer className="app-footer compact-app-footer">
           <span>Built with intention by </span>
           <a href={PORTFOLIO_URL} target="_blank" rel="noreferrer">Samuel Ojo</a>
         </footer>
